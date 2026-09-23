@@ -14,10 +14,10 @@ namespace PlayniteAnywhere
     public class PlayniteAnywhere : GenericPlugin
     {
         private static readonly ILogger logger = LogManager.GetLogger();
-
         private PlayniteAnywhereSettingsViewModel settings { get; set; }
-
         public override Guid Id { get; } = Guid.Parse("1b4b762f-1a9a-423b-9643-1f323ef5ef71");
+
+        private WebServer webServer;
 
         public PlayniteAnywhere(IPlayniteAPI api) : base(api)
         {
@@ -57,6 +57,18 @@ namespace PlayniteAnywhere
         {
             // Add code to be executed when Playnite is initialized.
             logger.Info("Playnite Anywhere started.");
+
+            try
+            {
+                webServer = new WebServer(32650);
+                webServer.Start();
+
+                logger.Info("Playnite Anywhere web server started on port 32650.");
+            }
+            catch(Exception e)
+            {
+                logger.Error(e.ToString());
+            }
         }
 
         public override void OnApplicationStopped(OnApplicationStoppedEventArgs args)
