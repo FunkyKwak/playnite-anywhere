@@ -65,7 +65,7 @@ namespace PlayniteAnywhere
             {
                 logger.Info("Playnite Anywhere started.");
     
-                webServer = new WebServer(playniteApi);
+                webServer = new WebServer(playniteApi, preferencesManager);
                 webServer.Start(32650);
 
                 logger.Info("Playnite Anywhere web server started on port 32650.");

@@ -10,6 +10,7 @@ using EmbedIOWebServer = EmbedIO.WebServer;
 using System.Threading.Tasks;
 using System.Linq;
 using System.Reflection;
+using Swan;
 
 
 namespace PlayniteAnywhere
@@ -17,11 +18,13 @@ namespace PlayniteAnywhere
     public class WebServer
     {
         private readonly IPlayniteAPI playniteApi;
+        private readonly PreferencesManager preferencesManager;
         private EmbedIOWebServer server;
 
-        public WebServer(IPlayniteAPI playniteApi)
+        public WebServer(IPlayniteAPI playniteApi, PreferencesManager preferencesManager)
         {
             this.playniteApi = playniteApi;
+            this.preferencesManager = preferencesManager;
         }
 
         public void Start(int port)
@@ -36,6 +39,7 @@ namespace PlayniteAnywhere
             server.WithWebApi("/api", m => m
                 .WithController<StatusController>()
                 .WithController(() => new GamesController(playniteApi))
+                .WithController(() => new PreferencesController(preferencesManager))
             );
 
             // Serve website files
@@ -156,6 +160,82 @@ namespace PlayniteAnywhere
             {
                 await input.CopyToAsync(output);
             }
+        }
+    }
+
+    public class PreferencesController : WebApiController
+    {
+        private static readonly ILogger logger = LogManager.GetLogger();
+        private readonly PreferencesManager preferencesManager;
+
+        public PreferencesController(PreferencesManager preferencesManager)
+        {
+            this.preferencesManager = preferencesManager;
+        }
+
+        [Route(HttpVerbs.Get, "/preferences")]
+        public PlayniteAnywherePreferences GetPreferences()
+        {
+            return preferencesManager.Preferences;
+        }
+
+        [Route(HttpVerbs.Post, "/preferences")]
+        public void SetPreferences([JsonData] PlayniteAnywherePreferences preferences)
+        {
+            logger.Info("=== SET PREFERENCES ===");
+            logger.Info($"{preferences.ToJson()}");
+            logger.Info($"request.Name = {preferences.GroupBy}");
+
+            if (preferences == null)
+            {
+                HttpContext.Response.StatusCode = 400;
+                logger.Error("preferences == null, returns 404");
+                return;
+            }
+
+            var allowedValues = new[]
+            {
+                "None",
+                "Source",
+                "Progress",
+                "Platform"
+            };
+
+            if (!allowedValues.Contains(preferences.GroupBy))
+            {
+                HttpContext.Response.StatusCode = 400;
+                logger.Error($"GroupBy value '{preferences.GroupBy}' not allowed");
+                return;
+            }
+
+            preferencesManager.Preferences.GroupBy = preferences.GroupBy;
+            preferencesManager.Save();
+        }
+
+        [Route(HttpVerbs.Post, "/preferences/groups")]
+        public void SetGroupState([JsonData] GroupStateRequest request)
+        {
+            logger.Info("=== SET GROUP STATE ===");
+            logger.Info($"{request.ToJson()}");
+            logger.Info($"request.Name = {request.Name}");
+            logger.Info($"request.Collapsed = {request.Collapsed}");
+            if (request == null)
+            {
+                HttpContext.Response.StatusCode = 400;
+                logger.Error("preferences == null, returns 404");
+                return;
+            }
+            if (string.IsNullOrEmpty(request.Name))
+            {
+                HttpContext.Response.StatusCode = 400;
+                logger.Error($"GroupStateRequest incorrect : '{request.ToJson()}'");
+                return;
+            }
+
+            preferencesManager.SetGroupCollapsed(
+                request.Name,
+                request.Collapsed
+            );
         }
     }
 }

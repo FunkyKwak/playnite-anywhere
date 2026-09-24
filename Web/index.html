@@ -12,13 +12,30 @@
 <body>
 
     <header class="topbar">
+
         <div class="logo">
             Playnite Anywhere
         </div>
 
-        <div class="game-count" id="game-count">
-            Chargement...
+        <div class="toolbar">
+
+            <div class="grouping">
+                <label for="group-by">Regrouper par</label>
+
+                <select id="group-by">
+                    <option value="None">Aucun</option>
+                    <option value="Source">Source</option>
+                    <option value="Progress">Progression</option>
+                    <option value="Platform">Plateforme</option>
+                </select>
+            </div>
+
+            <div class="game-count" id="game-count">
+                Chargement...
+            </div>
+
         </div>
+
     </header>
 
     <main>
@@ -28,7 +45,7 @@
                 <h1>Bibliothèque</h1>
             </div>
 
-            <div id="games" class="games-grid">
+            <div id="games" class="games-container">
                 <div class="loading">
                     Chargement des jeux...
                 </div>
