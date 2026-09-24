@@ -92,6 +92,8 @@ namespace PlayniteAnywhere
                 id = game.Id,
                 name = game.Name,
                 favorite = game.Favorite,
+                source = game.Source?.Name,
+                completionStatus = game.CompletionStatus?.Name,
                 cover = string.IsNullOrEmpty(game.CoverImage) ? null : $"/api/covers/{game.Id}"
             });
         }
