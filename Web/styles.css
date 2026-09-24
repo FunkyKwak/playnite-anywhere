@@ -141,3 +141,51 @@ main {
 
     color: #888888;
 }
+
+@media (max-width: 600px) {
+    .topbar {
+        height: 56px;
+        padding: 0 16px;
+    }
+
+    .logo {
+        font-size: 18px;
+    }
+
+    .game-count {
+        font-size: 13px;
+    }
+
+    main {
+        padding: 16px;
+    }
+
+    .section-header {
+        margin-bottom: 16px;
+    }
+
+    .section-header h1 {
+        font-size: 20px;
+    }
+
+    .games-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+    }
+
+    .game-info {
+        min-height: 48px;
+        padding: 8px 10px;
+    }
+
+    .game-name {
+        font-size: 13px;
+        line-height: 17px;
+    }
+
+    .favorite {
+        right: 8px;
+        top: 7px;
+        font-size: 15px;
+    }
+}
