@@ -1,5 +1,7 @@
 using System;
+using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using EmbedIO;
 using EmbedIO.Routing;
 using EmbedIO.WebApi;
@@ -73,10 +75,68 @@ namespace PlayniteAnywhere
                 id = game.Id,
                 name = game.Name,
                 favorite = game.Favorite,
-                cover = string.IsNullOrEmpty(game.CoverImage)
-                    ? null
-                    : $"/covers/{game.Id}"
+                cover = string.IsNullOrEmpty(game.CoverImage) ? null : $"/api/covers/{game.Id}"
             });
+        }
+
+        [Route(HttpVerbs.Get, "/covers/{id}")]
+        public async Task GetCover(Guid id)
+        {
+            var game = playniteApi.Database.Games[id];
+
+            if (game == null || string.IsNullOrEmpty(game.CoverImage))
+            {
+                HttpContext.Response.StatusCode = 404;
+                return;
+            }
+
+            var coverPath = playniteApi.Database.GetFullFilePath(game.CoverImage);
+
+            if (!File.Exists(coverPath))
+            {
+                HttpContext.Response.StatusCode = 404;
+                return;
+            }
+
+            var extension = Path.GetExtension(coverPath).ToLowerInvariant();
+
+            string contentType;
+
+            switch (extension)
+            {
+                case ".jpg":
+                case ".jpeg":
+                    contentType = "image/jpeg";
+                    break;
+
+                case ".png":
+                    contentType = "image/png";
+                    break;
+
+                case ".webp":
+                    contentType = "image/webp";
+                    break;
+
+                case ".gif":
+                    contentType = "image/gif";
+                    break;
+
+                case ".bmp":
+                    contentType = "image/bmp";
+                    break;
+
+                default:
+                    contentType = "application/octet-stream";
+                    break;
+            }
+
+            HttpContext.Response.ContentType = contentType;
+
+            using (var input = File.OpenRead(coverPath))
+            using (var output = HttpContext.OpenResponseStream(true, false))
+            {
+                await input.CopyToAsync(output);
+            }
         }
     }
 }
