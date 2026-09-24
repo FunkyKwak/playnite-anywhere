@@ -196,7 +196,7 @@ function groupGames(games, groupBy) {
                 break;
 
             case "Platform":
-                groupName = game.platforms?.join(", ") || "Plateforme inconnue";
+                groupName = game.platforms || "Plateforme inconnue";
                 break;
 
             default:

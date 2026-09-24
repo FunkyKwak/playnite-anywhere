@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Linq;
 using System.Reflection;
 using Swan;
+using System.Collections.Generic;
 
 
 namespace PlayniteAnywhere
@@ -98,6 +99,7 @@ namespace PlayniteAnywhere
                 favorite = game.Favorite,
                 source = game.Source?.Name,
                 completionStatus = game.CompletionStatus?.Name,
+                platforms = string.Join(", ", game.Platforms?.Select(p => p?.Name ?? "Plateforme inconnue") ?? new List<string>{"Plateforme inconnue"}),
                 cover = string.IsNullOrEmpty(game.CoverImage) ? null : $"/api/covers/{game.Id}"
             });
         }
