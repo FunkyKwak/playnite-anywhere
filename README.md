@@ -1,8 +1,12 @@
-# Playnite Anywhere
+# Playnite Anywhere <img align="left" width="130" height="80" src="/docs/images/icon.png" alt="Extension icon">
+
+<br/>
 
 Access your Playnite library from any device on your local network.
 
 Playnite Anywhere is a Playnite extension that adds a lightweight web interface to your Playnite library. Once installed, it starts a small web server directly inside Playnite, allowing you to browse your games from a phone, tablet, laptop, or any other device connected to the same local network.
+
+![screenshot-main](docs\images\screenshot-main.png)
 
 ## Features
 
