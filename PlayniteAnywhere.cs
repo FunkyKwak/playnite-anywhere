@@ -18,9 +18,11 @@ namespace PlayniteAnywhere
         public override Guid Id { get; } = Guid.Parse("1b4b762f-1a9a-423b-9643-1f323ef5ef71");
 
         private WebServer webServer;
+        private readonly IPlayniteAPI playniteApi;
 
         public PlayniteAnywhere(IPlayniteAPI api) : base(api)
         {
+            playniteApi = api;
             settings = new PlayniteAnywhereSettingsViewModel(this);
             Properties = new GenericPluginProperties
             {
@@ -56,11 +58,11 @@ namespace PlayniteAnywhere
         public override void OnApplicationStarted(OnApplicationStartedEventArgs args)
         {
             // Add code to be executed when Playnite is initialized.
-            logger.Info("Playnite Anywhere started.");
-
             try
             {
-                webServer = new WebServer();
+                logger.Info("Playnite Anywhere started.");
+    
+                webServer = new WebServer(playniteApi);
                 webServer.Start(32650);
 
                 logger.Info("Playnite Anywhere web server started on port 32650.");
