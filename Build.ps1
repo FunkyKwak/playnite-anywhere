@@ -90,10 +90,19 @@ $DllPath = Join-Path $ReleaseDir "net462\PlayniteAnywhere.dll"
 if (-not (Test-Path $DllPath)) {
     throw "DLL compilée introuvable : $DllPath"
 }
-Copy-Item `
-    $DllPath `
-    $PackageDir `
-    -Force
+Copy-Item $DllPath $PackageDir -Force
+    
+$DllPath = Join-Path $ReleaseDir "net462\EmbedIO.dll"
+if (-not (Test-Path $DllPath)) {
+    throw "DLL EmbedIO introuvable : $DllPath"
+}
+Copy-Item $DllPath $PackageDir -Force
+    
+$DllPath = Join-Path $ReleaseDir "net462\Swan.Lite.dll"
+if (-not (Test-Path $DllPath)) {
+    throw "DLL Swan.Lite introuvable : $DllPath"
+}
+Copy-Item $DllPath $PackageDir -Force
 
 
 

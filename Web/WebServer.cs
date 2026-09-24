@@ -1,88 +1,47 @@
-using System;
-using System.Net;
-using System.Text;
-using System.Threading;
+using EmbedIO;
+using EmbedIO.Routing;
+using EmbedIO.WebApi;
+using EmbedIOWebServer = EmbedIO.WebServer;
 
 namespace PlayniteAnywhere
 {
     public class WebServer
     {
-        private readonly HttpListener listener;
-        private Thread serverThread;
+        private EmbedIOWebServer server;
 
-        public WebServer(int port)
+        public void Start(int port)
         {
-            listener = new HttpListener();
-            listener.Prefixes.Add($"http://localhost:{port}/");
-        }
+            server = new EmbedIOWebServer(options =>
+                options
+                    .WithUrlPrefix($"http://*:{port}/")
+                    .WithMode(HttpListenerMode.EmbedIO)
+            );
 
-        public void Start()
-        {
-            listener.Start();
+            server.WithWebApi("/api", m => m
+                .WithController<StatusController>()
+            );
 
-            serverThread = new Thread(ListenLoop)
-            {
-                IsBackground = true
-            };
-
-            serverThread.Start();
+            server.RunAsync();
         }
 
         public void Stop()
         {
-            if (!listener.IsListening)
+            if (server == null)
             {
                 return;
             }
 
-            listener.Stop();
-            listener.Close();
-
-            if (serverThread != null && serverThread.IsAlive)
-            {
-                serverThread.Join(1000);
-            }
+            server.Dispose();
+            server = null;
         }
+    }
 
-        private void ListenLoop()
+    public class StatusController : WebApiController
+    {
+        [Route(HttpVerbs.Get, "/status")]
+        public string GetStatus()
         {
-            while (listener.IsListening)
-            {
-                try
-                {
-                    var context = listener.GetContext();
-                    HandleRequest(context);
-                }
-                catch (HttpListenerException)
-                {
-                    // Expected when the listener is stopped.
-                    break;
-                }
-                catch (ObjectDisposedException)
-                {
-                    break;
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex);
-                }
-            }
-        }
-
-        private void HandleRequest(HttpListenerContext context)
-        {
-            const string responseText = "Playnite Anywhere fonctionne !";
-
-            byte[] buffer = Encoding.UTF8.GetBytes(responseText);
-
-            context.Response.StatusCode = 200;
-            context.Response.ContentType = "text/plain; charset=utf-8";
-            context.Response.ContentLength64 = buffer.Length;
-
-            using (var output = context.Response.OutputStream)
-            {
-                output.Write(buffer, 0, buffer.Length);
-            }
+            return "Playnite Anywhere fonctionne !";
         }
     }
 }

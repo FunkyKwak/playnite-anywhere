@@ -60,8 +60,8 @@ namespace PlayniteAnywhere
 
             try
             {
-                webServer = new WebServer(32650);
-                webServer.Start();
+                webServer = new WebServer();
+                webServer.Start(32650);
 
                 logger.Info("Playnite Anywhere web server started on port 32650.");
             }
@@ -74,6 +74,7 @@ namespace PlayniteAnywhere
         public override void OnApplicationStopped(OnApplicationStoppedEventArgs args)
         {
             // Add code to be executed when Playnite is shutting down.
+            webServer.Stop();
         }
 
         public override void OnLibraryUpdated(OnLibraryUpdatedEventArgs args)
