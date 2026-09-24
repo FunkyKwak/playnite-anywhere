@@ -1,13 +1,16 @@
 using System;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using EmbedIO;
+using EmbedIO.Files;
 using EmbedIO.Routing;
 using EmbedIO.WebApi;
 using Playnite.SDK;
 using Playnite.SDK.Models;
 using EmbedIOWebServer = EmbedIO.WebServer;
+using System.Threading.Tasks;
+using System.Linq;
+using System.Reflection;
+
 
 namespace PlayniteAnywhere
 {
@@ -29,9 +32,23 @@ namespace PlayniteAnywhere
                     .WithMode(HttpListenerMode.EmbedIO)
             );
 
+            //API 
             server.WithWebApi("/api", m => m
                 .WithController<StatusController>()
                 .WithController(() => new GamesController(playniteApi))
+            );
+
+            // Serve website files
+            var pluginPath = Path.GetDirectoryName(
+                Assembly.GetExecutingAssembly().Location
+            );
+
+            var webPath = Path.Combine(pluginPath, "Web");
+            server.WithModule(
+                new FileModule(
+                    "/",
+                    new FileSystemProvider(webPath,false)
+                )
             );
 
             server.RunAsync();

@@ -1,0 +1,143 @@
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+}
+
+body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: #151515;
+    color: #eeeeee;
+}
+
+.topbar {
+    height: 64px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 24px;
+
+    background: #202020;
+    border-bottom: 1px solid #333333;
+}
+
+.logo {
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.game-count {
+    font-size: 14px;
+    color: #999999;
+}
+
+main {
+    padding: 24px;
+}
+
+.section-header {
+    margin-bottom: 20px;
+}
+
+.section-header h1 {
+    margin: 0;
+
+    font-size: 24px;
+    font-weight: 500;
+}
+
+.games-grid {
+    display: grid;
+
+    grid-template-columns: repeat(
+        auto-fill,
+        minmax(180px, 1fr)
+    );
+
+    gap: 20px;
+}
+
+.game-card {
+    position: relative;
+
+    overflow: hidden;
+
+    background: #222222;
+    border-radius: 6px;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.15s ease,
+        background 0.15s ease;
+}
+
+.game-card:hover {
+    transform: translateY(-4px);
+    background: #292929;
+}
+
+.game-cover {
+    display: block;
+
+    width: 100%;
+    aspect-ratio: 2 / 3;
+
+    object-fit: cover;
+
+    background: #111111;
+}
+
+.no-cover {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    color: #777777;
+}
+
+.game-info {
+    position: relative;
+
+    min-height: 52px;
+
+    padding: 10px 12px;
+}
+
+.game-name {
+    padding-right: 22px;
+
+    font-size: 14px;
+    line-height: 18px;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.favorite {
+    position: absolute;
+
+    right: 10px;
+    top: 9px;
+
+    color: #ffd54a;
+    font-size: 17px;
+}
+
+.loading,
+.error {
+    padding: 40px;
+
+    text-align: center;
+
+    color: #888888;
+}

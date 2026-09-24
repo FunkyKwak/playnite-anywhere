@@ -5,8 +5,12 @@ $ProjectDir = $PSScriptRoot
 $ProjectFile = Join-Path $ProjectDir "PlayniteAnywhere.csproj"
 $Toolbox = Join-Path $env:LOCALAPPDATA "Playnite\Toolbox.exe"
 
+
 $BinDir = Join-Path $ProjectDir "bin"
 $ReleaseDir = Join-Path $BinDir "Release"
+$SubReleaseDir = Join-Path $ReleaseDir "net462"
+
+
 $PackageDir = Join-Path $BinDir "Package"
 
 
@@ -78,27 +82,30 @@ Write-Host ""
 Write-Host "=== Préparation de l'extension ==="
 
 
-$ExtensionManifest = Get-Content `
-    (Join-Path $ProjectDir "extension.yaml") `
-    -Raw
-$ExtensionManifest |
-    Set-Content `
-        (Join-Path $PackageDir "extension.yaml") `
-        -Encoding UTF8
+Copy-Item (Join-Path $SubReleaseDir "extension.yaml") $PackageDir -Force
+Copy-Item (Join-Path $SubReleaseDir "Web") $PackageDir -Recurse -Force
 
-$DllPath = Join-Path $ReleaseDir "net462\PlayniteAnywhere.dll"
+#$ExtensionManifest = Get-Content `
+#    (Join-Path $ProjectDir "extension.yaml") `
+#    -Raw
+#$ExtensionManifest |
+#    Set-Content `
+#        (Join-Path $PackageDir "extension.yaml") `
+#        -Encoding UTF8
+
+$DllPath = Join-Path $SubReleaseDir "PlayniteAnywhere.dll"
 if (-not (Test-Path $DllPath)) {
     throw "DLL compilée introuvable : $DllPath"
 }
 Copy-Item $DllPath $PackageDir -Force
     
-$DllPath = Join-Path $ReleaseDir "net462\EmbedIO.dll"
+$DllPath = Join-Path $SubReleaseDir "EmbedIO.dll"
 if (-not (Test-Path $DllPath)) {
     throw "DLL EmbedIO introuvable : $DllPath"
 }
 Copy-Item $DllPath $PackageDir -Force
     
-$DllPath = Join-Path $ReleaseDir "net462\Swan.Lite.dll"
+$DllPath = Join-Path $SubReleaseDir "Swan.Lite.dll"
 if (-not (Test-Path $DllPath)) {
     throw "DLL Swan.Lite introuvable : $DllPath"
 }
