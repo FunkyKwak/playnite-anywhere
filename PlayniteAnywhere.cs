@@ -4,6 +4,7 @@ using Playnite.SDK.Models;
 using Playnite.SDK.Plugins;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,11 +20,13 @@ namespace PlayniteAnywhere
 
         private WebServer webServer;
         private readonly IPlayniteAPI playniteApi;
+        private PreferencesManager preferencesManager;
 
         public PlayniteAnywhere(IPlayniteAPI api) : base(api)
         {
             playniteApi = api;
             settings = new PlayniteAnywhereSettingsViewModel(this);
+            preferencesManager = new PreferencesManager(Path.Combine(playniteApi.Paths.ExtensionsDataPath, this.Id.ToString()));
             Properties = new GenericPluginProperties
             {
                 HasSettings = true
