@@ -7,6 +7,8 @@ services:
     container_name: playnite-anywhere-backend
     ports:
       - "8080:8080"
+    volumes:
+      - covers_data:/app/covers
     environment:
       ASPNETCORE_ENVIRONMENT: Production
       ConnectionStrings__Default: Host=postgres;Port=5432;Database=playnite_anywhere;Username=playnite;Password=change-me
@@ -31,3 +33,4 @@ services:
 
 volumes:
   postgres_data:
+  covers_data:

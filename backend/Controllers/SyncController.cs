@@ -72,4 +72,49 @@ public class SyncController : ControllerBase
             total = await db.Games.CountAsync()
         });
     }
+
+    
+
+    [HttpPost("covers/{id:guid}")]
+    public async Task<IActionResult> SyncCover(
+        Guid id,
+        IFormFile file)
+    {
+        if (file == null || file.Length == 0)
+        {
+            return BadRequest("Fichier manquant.");
+        }
+
+        var game = await db.Games.FindAsync(id);
+
+        if (game == null)
+        {
+            return NotFound("Jeu introuvable.");
+        }
+
+        var coversDirectory = Path.Combine(
+            AppContext.BaseDirectory,
+            "covers"
+        );
+
+        Directory.CreateDirectory(coversDirectory);
+
+        var extension = Path.GetExtension(file.FileName);
+
+        var filePath = Path.Combine(
+            coversDirectory,
+            $"{id}{extension}"
+        );
+
+        await using var stream = System.IO.File.Create(filePath);
+
+        await file.CopyToAsync(stream);
+
+        return Ok(new
+        {
+            id,
+            size = file.Length
+        });
+    }
+
 }
