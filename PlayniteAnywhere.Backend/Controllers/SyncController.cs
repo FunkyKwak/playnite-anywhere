@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlayniteAnywhere.Backend.Data;
 using PlayniteAnywhere.Backend.Models;
+using PlayniteAnywhere.Common.Models;
 
 namespace PlayniteAnywhere.Backend.Controllers;
 

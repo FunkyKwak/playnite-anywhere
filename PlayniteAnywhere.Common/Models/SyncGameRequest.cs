@@ -1,0 +1,16 @@
+using System;
+
+namespace PlayniteAnywhere.Common.Models
+{
+
+    public class SyncGameRequest
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public bool Favorite { get; set; }
+        public string Source { get; set; }
+        public string CompletionStatus { get; set; }
+        public string Platforms { get; set; }
+    }
+
+}
