@@ -3,6 +3,8 @@ using PlayniteAnywhere.Backend.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddControllers();
+
 builder.Services.AddDbContext<PlayniteAnywhereDbContext>(options =>
     options.UseNpgsql(
         builder.Configuration.GetConnectionString("Default")
@@ -18,6 +20,8 @@ using (var scope = app.Services.CreateScope())
 
     db.Database.Migrate();
 }
+
+app.MapControllers();
 
 app.MapGet("/api/status", () => "Playnite Anywhere Backend fonctionne !");
 
