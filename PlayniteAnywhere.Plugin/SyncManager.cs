@@ -3,28 +3,27 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 using Playnite.SDK;
+using System.Runtime.Serialization.Json;
 using PlayniteAnywhere.Common.Models;
+using System.IO;
 
 namespace PlayniteAnywhere
 {
     public class SyncManager
     {
-        private static readonly ILogger logger =
-            LogManager.GetLogger();
+        private static readonly ILogger logger = LogManager.GetLogger();
 
         private readonly IPlayniteAPI playniteApi;
         private readonly string serverUrl;
 
         private readonly HttpClient httpClient;
 
-        public SyncManager(
-            IPlayniteAPI playniteApi,
-            string serverUrl)
+        public SyncManager(IPlayniteAPI playniteApi, string serverUrl)
         {
             this.playniteApi = playniteApi;
-            this.serverUrl = serverUrl.TrimEnd('/');
+            if(!string.IsNullOrWhiteSpace(serverUrl))
+                this.serverUrl = serverUrl.TrimEnd('/');
 
             httpClient = new HttpClient();
         }
@@ -48,10 +47,26 @@ namespace PlayniteAnywhere
             }
 
             logger.Info(
-                $"Synchronisation de {games.Count} jeux..."
+                $"Synchronisation de {games.Count} jeux vers le serveur {serverUrl}..."
             );
 
-            var json = JsonConvert.SerializeObject(games);
+            string json;
+
+            var serializer = new DataContractJsonSerializer(
+                typeof(List<SyncGameRequest>)
+            );
+
+            using (var stream = new MemoryStream())
+            {
+                serializer.WriteObject(stream, games);
+
+                stream.Position = 0;
+
+                using (var reader = new StreamReader(stream))
+                {
+                    json = reader.ReadToEnd();
+                }
+            }
 
             using (var content = new StringContent(
                 json,

@@ -2,8 +2,13 @@ bin/
 obj/
 .git/
 .vscode/
+**/bin/
+**/obj/
+**/.git/
+**/.vscode/
 *.user
 *.suo
 *.userosscache
 *.slnx
 README.md
+**/README.md

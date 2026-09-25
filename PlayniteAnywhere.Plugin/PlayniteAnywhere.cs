@@ -21,6 +21,7 @@ namespace PlayniteAnywhere
         private WebServer webServer;
         private readonly IPlayniteAPI playniteApi;
         private PreferencesManager preferencesManager;
+        private SyncManager syncManager;
 
         public PlayniteAnywhere(IPlayniteAPI api) : base(api)
         {
@@ -31,6 +32,14 @@ namespace PlayniteAnywhere
             {
                 HasSettings = true
             };
+
+            if (!string.IsNullOrWhiteSpace(settings.Settings.SyncServerUrl))
+            {
+                syncManager = new SyncManager(
+                    playniteApi,
+                    settings.Settings.SyncServerUrl
+                );
+            }
         }
 
         public override void OnGameInstalled(OnGameInstalledEventArgs args)
@@ -69,6 +78,23 @@ namespace PlayniteAnywhere
                 webServer.Start(32650);
 
                 logger.Info("Playnite Anywhere web server started on port 32650.");
+
+                if (syncManager != null)
+                {
+                    Task.Run(async () =>
+                    {
+                        try
+                        {
+                            await syncManager.SyncGames();
+                        }
+                        catch (Exception ex)
+                        {
+                            logger.Error(
+                                $"Erreur de synchronisation : {ex}"
+                            );
+                        }
+                    });
+                }
             }
             catch(Exception e)
             {

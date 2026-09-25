@@ -2,8 +2,8 @@ services:
 
   backend:
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: ..
+      dockerfile: PlayniteAnywhere.Backend/Dockerfile
     container_name: playnite-anywhere-backend
     ports:
       - "8080:8080"

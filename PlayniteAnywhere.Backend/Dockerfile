@@ -6,11 +6,12 @@ EXPOSE 8080
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
 
-COPY ["PlayniteAnywhere.Backend.csproj", "."]
-RUN dotnet restore "PlayniteAnywhere.Backend.csproj"
+COPY ["PlayniteAnywhere.Common/PlayniteAnywhere.Common.csproj", "PlayniteAnywhere.Common/"]
+COPY ["PlayniteAnywhere.Backend/PlayniteAnywhere.Backend.csproj", "PlayniteAnywhere.Backend/"]
+RUN dotnet restore "PlayniteAnywhere.Backend/PlayniteAnywhere.Backend.csproj"
 
 COPY . .
-RUN dotnet publish "PlayniteAnywhere.Backend.csproj" \
+RUN dotnet publish "PlayniteAnywhere.Backend/PlayniteAnywhere.Backend.csproj" \
     -c Release \
     -o /app/publish \
     --no-restore

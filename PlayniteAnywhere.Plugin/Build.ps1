@@ -98,6 +98,11 @@ if (-not (Test-Path $DllPath)) {
     throw "DLL compilée introuvable : $DllPath"
 }
 Copy-Item $DllPath $PackageDir -Force
+$DllPath = Join-Path $SubReleaseDir "PlayniteAnywhere.Common.dll"
+if (-not (Test-Path $DllPath)) {
+    throw "DLL compilée introuvable : $DllPath"
+}
+Copy-Item $DllPath $PackageDir -Force
     
 $DllPath = Join-Path $SubReleaseDir "EmbedIO.dll"
 if (-not (Test-Path $DllPath)) {
