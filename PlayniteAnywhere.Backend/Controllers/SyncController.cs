@@ -132,6 +132,20 @@ public class SyncController : ControllerBase
 
         Directory.CreateDirectory(coversDirectory);
 
+        // Supprime toute ancienne version de la cover
+        var existingFiles = Directory.GetFiles(
+            coversDirectory,
+            $"{id}.*"
+        );
+        foreach (var existingFile in existingFiles)
+        {
+            System.IO.File.Delete(existingFile);
+            logger.LogInformation(
+                "Ancienne cover supprimée : {FilePath}",
+                existingFile
+            );
+        }
+
         var extension = Path.GetExtension(file.FileName);
 
         var filePath = Path.Combine(
