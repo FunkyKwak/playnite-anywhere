@@ -87,6 +87,81 @@ namespace PlayniteAnywhere
                     $"Synchronisation terminée : {responseBody}"
                 );
             }
+
+            
+
+            foreach (var game in playniteApi.Database.Games)
+            {
+                if (!string.IsNullOrEmpty(game.CoverImage))
+                {
+                    var coverPath = playniteApi.Database.GetFullFilePath(game.CoverImage);
+
+                    if (string.IsNullOrEmpty(coverPath) || !File.Exists(coverPath))
+                    {
+                        logger.Warn($"Cover introuvable pour {game.Name} : {coverPath}");
+                        continue;
+                    }
+
+                    await SyncCover(
+                        game.Id,
+                        coverPath
+                    );
+                }
+            }
+            logger.Info($"Synchronisation des covers terminée");
+        }
+
+        private async Task SyncCover(Guid gameId, string coverPath)
+        {
+            logger.Info($"Synchronisation de la cover : {gameId}");
+
+            using (var content = new MultipartFormDataContent())
+            using (var fileStream = File.OpenRead(coverPath))
+            using (var fileContent = new StreamContent(fileStream))
+            {
+                fileContent.Headers.ContentType =
+                    new System.Net.Http.Headers.MediaTypeHeaderValue(
+                        GetContentType(Path.GetExtension(coverPath))
+                    );
+
+                content.Add(
+                    fileContent,
+                    "file",
+                    Path.GetFileName(coverPath)
+                );
+
+                var response = await httpClient.PostAsync(
+                    $"{serverUrl}/api/sync/covers/{gameId}",
+                    content
+                );
+
+                response.EnsureSuccessStatusCode();
+            }
+        }
+
+        private static string GetContentType(string extension)
+        {
+            switch (extension.ToLowerInvariant())
+            {
+                case ".jpg":
+                case ".jpeg":
+                    return "image/jpeg";
+
+                case ".png":
+                    return "image/png";
+
+                case ".webp":
+                    return "image/webp";
+
+                case ".gif":
+                    return "image/gif";
+
+                case ".bmp":
+                    return "image/bmp";
+
+                default:
+                    return "application/octet-stream";
+            }
         }
     }
 }
