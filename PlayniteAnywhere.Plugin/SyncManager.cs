@@ -104,7 +104,8 @@ namespace PlayniteAnywhere
                     $"Synchronisation terminée : " +
                     $"{syncResult.received} jeux reçus, " +
                     $"{syncResult.deleted} supprimés, " +
-                    $"{syncResult.coversToSync.Count} covers à synchroniser."
+                    $"{syncResult.coversToSync.Count} covers à mettre à jour, " +
+                    $"{syncResult.coversToRemove.Count} covers à supprimer."
                 );
             }
 
@@ -124,6 +125,10 @@ namespace PlayniteAnywhere
                         coverPath
                     );
                 }
+            }
+            foreach (var gameId in syncResult.coversToRemove)
+            {
+                await RemoveCover(gameId);
             }
             logger.Info($"Synchronisation des covers terminée");
         }
@@ -172,6 +177,16 @@ namespace PlayniteAnywhere
 
                 response.EnsureSuccessStatusCode();
             }
+        }
+
+        private async Task RemoveCover(Guid gameId)
+        {
+            logger.Info($"Suppression de la cover : {gameId}");
+            var response = await httpClient.DeleteAsync(
+                $"{serverUrl}/api/sync/covers/{gameId}"
+            );
+            response.EnsureSuccessStatusCode();
+            logger.Info($"Cover supprimée : {gameId}");
         }
 
         private static string GetContentType(string extension)

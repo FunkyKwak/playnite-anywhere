@@ -33,6 +33,7 @@ public class SyncController : ControllerBase
 
         var receivedIds = new HashSet<Guid>();
         var coversToSync = new List<Guid>();
+        var coversToRemove = new List<Guid>();
         
         logger.LogInformation("Début synchronisation : {Count} jeux reçus.", games.Count);
 
@@ -45,13 +46,20 @@ public class SyncController : ControllerBase
                 out var existingGame))
             {
                 var coverChanged =
-                    existingGame.CoverSize != incomingGame.CoverSize ||
-                    existingGame.CoverLastWriteTimeUtcTicks != incomingGame.CoverLastWriteTimeUtcTicks;
+                    incomingGame.CoverSize != null &&
+                        (existingGame.CoverSize != incomingGame.CoverSize ||
+                        existingGame.CoverLastWriteTimeUtcTicks != incomingGame.CoverLastWriteTimeUtcTicks);
+                var coverRemoved = incomingGame.CoverSize == null && existingGame.CoverSize != null;
 
                 if (coverChanged)
                 {
-                    logger.LogInformation("Cover modifiée !");
+                    logger.LogInformation($"Cover modifiée ! {incomingGame.Name}");
                     coversToSync.Add(incomingGame.Id);
+                }
+                if (coverRemoved)
+                {
+                    logger.LogInformation($"Cover supprimée ! {incomingGame.Name}");
+                    coversToRemove.Add(incomingGame.Id);   
                 }
 
                 existingGame.Name = incomingGame.Name;
@@ -93,7 +101,8 @@ public class SyncController : ControllerBase
             received = games.Count,
             deleted = gamesToDelete.Count,
             total = await db.Games.CountAsync(),
-            coversToSync
+            coversToSync,
+            coversToRemove
         });
     }
 
@@ -141,4 +150,43 @@ public class SyncController : ControllerBase
         });
     }
 
+
+    [HttpDelete("covers/{id:guid}")]
+    public async Task<IActionResult> RemoveCover(Guid id)
+    {
+        var coversDirectory = Path.Combine(
+            AppContext.BaseDirectory,
+            "covers"
+        );
+
+        if (!Directory.Exists(coversDirectory))
+        {
+            return Ok(new
+            {
+                id,
+                removed = false
+            });
+        }
+
+        var files = Directory.GetFiles(
+            coversDirectory,
+            $"{id}.*"
+        );
+
+        foreach (var filePath in files)
+        {
+            System.IO.File.Delete(filePath);
+
+            logger.LogInformation(
+                "Cover supprimée : {FilePath}",
+                filePath
+            );
+        }
+
+        return Ok(new
+        {
+            id,
+            removed = files.Length > 0
+        });
+    }
 }

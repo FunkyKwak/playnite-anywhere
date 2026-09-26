@@ -7,4 +7,5 @@ public class SyncGamesResponse
     public int deleted { get; set; }
     public int total { get; set; }
     public List<Guid> coversToSync { get; set; } = new List<Guid>();
+    public List<Guid> coversToRemove { get; set; } = new List<Guid>();
 }
