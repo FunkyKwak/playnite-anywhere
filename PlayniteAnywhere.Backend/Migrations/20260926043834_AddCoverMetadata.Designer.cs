@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using PlayniteAnywhere.Backend.Data;
@@ -11,9 +12,11 @@ using PlayniteAnywhere.Backend.Data;
 namespace PlayniteAnywhere.Backend.Migrations
 {
     [DbContext(typeof(PlayniteAnywhereDbContext))]
-    partial class PlayniteAnywhereDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260926043834_AddCoverMetadata")]
+    partial class AddCoverMetadata
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

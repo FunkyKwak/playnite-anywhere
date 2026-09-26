@@ -11,6 +11,8 @@ namespace PlayniteAnywhere.Common.Models
         public string Source { get; set; }
         public string CompletionStatus { get; set; }
         public string Platforms { get; set; }
+        public long? CoverSize { get; set; }
+        public long? CoverLastWriteTimeUtcTicks { get; set; }
     }
 
 }

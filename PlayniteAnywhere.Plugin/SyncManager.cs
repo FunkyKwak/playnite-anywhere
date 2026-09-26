@@ -36,13 +36,20 @@ namespace PlayniteAnywhere
 
             foreach (var game in playniteApi.Database.Games)
             {
+                FileInfo file = null;
+                string coverPath = GetCoverPath(game.Name, game.CoverImage);
+                if (coverPath != null)
+                    file = new FileInfo(coverPath);
+
                 games.Add(new SyncGameRequest
                 {
                     Id = game.Id,
                     Name = game.Name,
                     Favorite = game.Favorite,
                     Source = game.Source?.Name,
-                    CompletionStatus = game.CompletionStatus?.Name
+                    CompletionStatus = game.CompletionStatus?.Name,
+                    CoverSize = file?.Length,
+                    CoverLastWriteTimeUtcTicks = file?.LastWriteTimeUtc.Ticks
                 });
             }
 
@@ -68,6 +75,7 @@ namespace PlayniteAnywhere
                 }
             }
 
+            SyncGamesResponse syncResult;
             using (var content = new StringContent(
                 json,
                 Encoding.UTF8,
@@ -80,28 +88,37 @@ namespace PlayniteAnywhere
 
                 response.EnsureSuccessStatusCode();
 
-                var responseBody =
-                    await response.Content.ReadAsStringAsync();
+                var responseBody = await response.Content.ReadAsStringAsync();
+
+                serializer = new DataContractJsonSerializer(
+                    typeof(SyncGamesResponse)
+                );
+
+
+                using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(responseBody)))
+                {
+                    syncResult = (SyncGamesResponse)serializer.ReadObject(stream);
+                }
 
                 logger.Info(
-                    $"Synchronisation terminée : {responseBody}"
+                    $"Synchronisation terminée : " +
+                    $"{syncResult.received} jeux reçus, " +
+                    $"{syncResult.deleted} supprimés, " +
+                    $"{syncResult.coversToSync.Count} covers à synchroniser."
                 );
             }
 
-            
 
             foreach (var game in playniteApi.Database.Games)
             {
-                if (!string.IsNullOrEmpty(game.CoverImage))
+                if (!syncResult.coversToSync.Contains(game.Id))
                 {
-                    var coverPath = playniteApi.Database.GetFullFilePath(game.CoverImage);
+                    continue;
+                }
 
-                    if (string.IsNullOrEmpty(coverPath) || !File.Exists(coverPath))
-                    {
-                        logger.Warn($"Cover introuvable pour {game.Name} : {coverPath}");
-                        continue;
-                    }
-
+                var coverPath = GetCoverPath(game.Name, game.CoverImage);
+                if (coverPath != null)
+                {
                     await SyncCover(
                         game.Id,
                         coverPath
@@ -109,6 +126,24 @@ namespace PlayniteAnywhere
                 }
             }
             logger.Info($"Synchronisation des covers terminée");
+        }
+
+        private string GetCoverPath(string gameName, string coverImage)
+        {
+            if (string.IsNullOrEmpty(coverImage))
+            {
+                return null;
+            }
+
+            var coverPath = playniteApi.Database.GetFullFilePath(coverImage);
+
+            if (string.IsNullOrEmpty(coverPath) || !File.Exists(coverPath))
+            {
+                logger.Warn($"Cover introuvable pour {gameName} : {coverPath}");
+                return null;
+            }
+            
+            return coverPath;
         }
 
         private async Task SyncCover(Guid gameId, string coverPath)

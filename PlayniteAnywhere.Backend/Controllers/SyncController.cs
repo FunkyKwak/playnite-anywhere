@@ -11,10 +11,14 @@ namespace PlayniteAnywhere.Backend.Controllers;
 public class SyncController : ControllerBase
 {
     private readonly PlayniteAnywhereDbContext db;
+    private readonly ILogger<SyncController> logger;
 
-    public SyncController(PlayniteAnywhereDbContext db)
+    public SyncController(
+        PlayniteAnywhereDbContext db,
+        ILogger<SyncController> logger)
     {
         this.db = db;
+        this.logger = logger;
     }
 
     [HttpPost("games")]
@@ -28,6 +32,9 @@ public class SyncController : ControllerBase
             .ToDictionaryAsync(game => game.Id);
 
         var receivedIds = new HashSet<Guid>();
+        var coversToSync = new List<Guid>();
+        
+        logger.LogInformation("Début synchronisation : {Count} jeux reçus.", games.Count);
 
         foreach (var incomingGame in games)
         {
@@ -37,11 +44,22 @@ public class SyncController : ControllerBase
                 incomingGame.Id,
                 out var existingGame))
             {
+                var coverChanged =
+                    existingGame.CoverSize != incomingGame.CoverSize ||
+                    existingGame.CoverLastWriteTimeUtcTicks != incomingGame.CoverLastWriteTimeUtcTicks;
+
+                if (coverChanged)
+                {
+                    logger.LogInformation("Cover modifiée !");
+                    coversToSync.Add(incomingGame.Id);
+                }
+
                 existingGame.Name = incomingGame.Name;
                 existingGame.Favorite = incomingGame.Favorite;
                 existingGame.Source = incomingGame.Source;
-                existingGame.CompletionStatus =
-                    incomingGame.CompletionStatus;
+                existingGame.CompletionStatus = incomingGame.CompletionStatus;
+                existingGame.CoverSize = incomingGame.CoverSize;
+                existingGame.CoverLastWriteTimeUtcTicks = incomingGame.CoverLastWriteTimeUtcTicks;
             }
             else
             {
@@ -51,9 +69,13 @@ public class SyncController : ControllerBase
                     Name = incomingGame.Name,
                     Favorite = incomingGame.Favorite,
                     Source = incomingGame.Source,
-                    CompletionStatus =
-                        incomingGame.CompletionStatus
+                    CompletionStatus = incomingGame.CompletionStatus
                 });
+
+                if (incomingGame.CoverSize.HasValue)
+                {
+                    coversToSync.Add(incomingGame.Id);
+                }
             }
         }
 
@@ -70,7 +92,8 @@ public class SyncController : ControllerBase
         {
             received = games.Count,
             deleted = gamesToDelete.Count,
-            total = await db.Games.CountAsync()
+            total = await db.Games.CountAsync(),
+            coversToSync
         });
     }
 
