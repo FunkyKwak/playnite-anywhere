@@ -1,12 +1,86 @@
 ﻿<UserControl x:Class="PlayniteAnywhere.PlayniteAnywhereSettingsView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              mc:Ignorable="d"
              d:DesignHeight="400" d:DesignWidth="600">
-    <StackPanel>
-        <TextBlock Text="URL de la base de données distante:"/>
-        <TextBox Text="{Binding Settings.SyncServerUrl}"/>
+    <StackPanel Margin="30">
+
+        <TextBlock
+            Text="Serveur Web"
+            FontWeight="Bold"
+            Margin="0,0,0,8" />
+
+        <Grid Margin="0,0,0,15">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+
+            <RadioButton
+                Grid.Column="0"
+                Content="Serveur Web dans le plugin"
+                IsChecked="{Binding UseLocalWebServer}"
+                GroupName="WebServerMode"
+                HorizontalContentAlignment="Center"
+                Padding="12,8"
+                Margin="0,0,2,0" />
+
+            <RadioButton
+                Grid.Column="1"
+                Content="Serveur Web distant"
+                IsChecked="{Binding IsRemoteWebServer, Mode=OneWay}"
+                GroupName="WebServerMode"
+                HorizontalContentAlignment="Center"
+                Padding="12,8"
+                Margin="2,0,0,0" />
+
+        </Grid>
+
+        <!-- Serveur local -->
+
+        <StackPanel Visibility="{Binding IsLocalWebServer, Converter={StaticResource BooleanToVisibilityConverter}}">
+
+            <TextBlock Text="Solution la plus simple : vous installez le plugin et ça fonctionne directement." TextWrapping="Wrap" Margin="0,0,0,8" />
+
+            <TextBlock Text="Playnite Anywhere démarre un serveur Web directement dans le plugin." TextWrapping="Wrap" Margin="0,0,0,8" />
+
+            <TextBlock Text="Pour y accéder, utilisez cette adresse depuis le même réseau local :" TextWrapping="Wrap" Margin="0,0,0,8" />
+
+            <TextBlock Margin="0,0,0,8">
+                <Hyperlink
+                    NavigateUri="{Binding LocalUrl, Mode=OneWay}"
+                    RequestNavigate="LocalUrl_RequestNavigate">
+                    <Run Text="{Binding LocalUrl, Mode=OneWay}" />
+                </Hyperlink>
+            </TextBlock>
+
+            <TextBlock Text="Le serveur est disponible uniquement lorsque Playnite est lancé. Pour avoir accès à l'interface Web en tout temps, vous devez l'installer sur un serveur web distant." TextWrapping="Wrap" Opacity="0.7" />
+
+        </StackPanel>
+
+        <!-- Serveur distant -->
+
+        <StackPanel Visibility="{Binding IsRemoteWebServer, Converter={StaticResource BooleanToVisibilityConverter}}">
+
+            <TextBlock Text="Cette solution nécessite l'installation du serveur web en dehors de Playnite, afin qu'il soit accessible tout le temps. " TextWrapping="Wrap" Margin="0,0,0,8" />
+
+            <TextBlock TextWrapping="Wrap" Margin="0,0,0,8">
+                <Run Text="L'installation du serveur web distant se fait via un container Docker, vous référerer à la" />
+                <Hyperlink
+                    NavigateUri="https://github.com/FunkyKwak/playnite-anywhere"
+                    RequestNavigate="GitHub_RequestNavigate">
+                    <Run Text="documentation du plugin" />
+                </Hyperlink><Run Text="." />
+            </TextBlock>
+
+            <TextBlock Text="Adresse du serveur :" Margin="0,0,0,4" />
+
+            <TextBox Text="{Binding Settings.SyncServerUrl}" Margin="0,0,0,8" />
+
+        </StackPanel>
+
     </StackPanel>
 </UserControl>

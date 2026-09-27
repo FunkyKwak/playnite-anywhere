@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 
+
 namespace PlayniteAnywhere
 {
     public class PlayniteAnywhere : GenericPlugin
@@ -33,8 +34,13 @@ namespace PlayniteAnywhere
                 HasSettings = true
             };
 
-            if (!string.IsNullOrWhiteSpace(settings.Settings.SyncServerUrl))
+            if (!settings.Settings.UseLocalWebServer)
             {
+                if (string.IsNullOrWhiteSpace(settings.Settings.SyncServerUrl))
+                {
+                    logger.Error("Missing SyncServerUrl");
+                    return;
+                }
                 syncManager = new SyncManager(
                     playniteApi,
                     settings.Settings.SyncServerUrl
@@ -73,13 +79,14 @@ namespace PlayniteAnywhere
             try
             {
                 logger.Info("Playnite Anywhere started.");
-    
-                webServer = new WebServer(playniteApi, preferencesManager);
-                webServer.Start(32650);
 
-                logger.Info("Playnite Anywhere web server started on port 32650.");
-
-                if (syncManager != null)
+                if (settings.UseLocalWebServer)
+                {
+                    webServer = new WebServer(playniteApi, preferencesManager);
+                    webServer.Start(32650);
+                    logger.Info("Playnite Anywhere web server started on port 32650.");
+                }
+                else
                 {
                     Task.Run(async () =>
                     {
