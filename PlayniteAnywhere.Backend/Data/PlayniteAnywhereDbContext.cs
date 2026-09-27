@@ -12,4 +12,12 @@ public class PlayniteAnywhereDbContext : DbContext
     }
 
     public DbSet<Game> Games => Set<Game>();
+    public DbSet<Preferences> Preferences => Set<Preferences>();
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Preferences>()
+            .Property(p => p.CollapsedGroups)
+            .HasColumnType("jsonb");
+    }
 }
