@@ -27,6 +27,7 @@ public class GamesController : ControllerBase
                 favorite = game.Favorite,
                 source = game.Source,
                 completionStatus = game.CompletionStatus,
+                platforms = game.Platforms,
                 cover = game.CoverSize.HasValue
                     ? $"/api/covers/{game.Id}"
                     : null

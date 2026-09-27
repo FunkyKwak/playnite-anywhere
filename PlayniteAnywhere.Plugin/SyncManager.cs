@@ -7,6 +7,7 @@ using Playnite.SDK;
 using System.Runtime.Serialization.Json;
 using PlayniteAnywhere.Common.Models;
 using System.IO;
+using System.Linq;
 
 namespace PlayniteAnywhere
 {
@@ -48,6 +49,7 @@ namespace PlayniteAnywhere
                     Favorite = game.Favorite,
                     Source = game.Source?.Name,
                     CompletionStatus = game.CompletionStatus?.Name,
+                    Platforms = string.Join(", ", game.Platforms?.Select(p => p?.Name ?? "Plateforme inconnue") ?? new List<string>{"Plateforme inconnue"}),
                     CoverSize = file?.Length,
                     CoverLastWriteTimeUtcTicks = file?.LastWriteTimeUtc.Ticks
                 });

@@ -66,6 +66,7 @@ public class SyncController : ControllerBase
                 existingGame.Favorite = incomingGame.Favorite;
                 existingGame.Source = incomingGame.Source;
                 existingGame.CompletionStatus = incomingGame.CompletionStatus;
+                existingGame.Platforms = incomingGame.Platforms;
                 existingGame.CoverSize = incomingGame.CoverSize;
                 existingGame.CoverLastWriteTimeUtcTicks = incomingGame.CoverLastWriteTimeUtcTicks;
             }
@@ -77,7 +78,8 @@ public class SyncController : ControllerBase
                     Name = incomingGame.Name,
                     Favorite = incomingGame.Favorite,
                     Source = incomingGame.Source,
-                    CompletionStatus = incomingGame.CompletionStatus
+                    CompletionStatus = incomingGame.CompletionStatus,
+                    Platforms = incomingGame.Platforms
                 });
 
                 if (incomingGame.CoverSize.HasValue)
