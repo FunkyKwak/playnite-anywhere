@@ -239,23 +239,13 @@ function createGameCard(game) {
         console.log("Jeu sélectionné :", game);
     });
 
-    if (game.cover) {
-        const image = document.createElement("img");
+    const image = document.createElement("img");
 
-        image.className = "game-cover";
-        image.src = game.cover;
-        image.alt = game.name;
+    image.className = "game-cover";
+    image.src = game.cover || "/default_cover_background.png";
+    image.alt = game.name;
 
-        card.appendChild(image);
-    }
-    else {
-        const noCover = document.createElement("div");
-
-        noCover.className = "game-cover no-cover";
-        noCover.textContent = "Pas de cover";
-
-        card.appendChild(noCover);
-    }
+    card.appendChild(image);
 
     const info = document.createElement("div");
 

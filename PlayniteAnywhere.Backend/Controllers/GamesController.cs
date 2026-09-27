@@ -27,7 +27,9 @@ public class GamesController : ControllerBase
                 favorite = game.Favorite,
                 source = game.Source,
                 completionStatus = game.CompletionStatus,
-                cover = $"/api/covers/{game.Id}"
+                cover = game.CoverSize.HasValue
+                    ? $"/api/covers/{game.Id}"
+                    : null
             })
             .ToListAsync();
 
