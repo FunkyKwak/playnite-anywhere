@@ -12,4 +12,4 @@ Screenshots:
       Image: https://raw.githubusercontent.com/FunkyKwak/playnite-anywhere/refs/heads/main/docs/images/screenshot-main.png
 FaqTopics:
     - Name: How do I use this addon ?
-      Answer: Install this extension, then navigate to http://localhost:32650 froom your computer or to http://YOUR-PC-IP:32650 from any other device on your network. 
+      Answer: Install this extension, then navigate to http://localhost:32650 from your computer or to http://YOUR-PC-IP:32650 from any other device on your network.
