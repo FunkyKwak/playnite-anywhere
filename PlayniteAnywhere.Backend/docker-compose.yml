@@ -1,9 +1,10 @@
 services:
 
   backend:
-    build:
-      context: ..
-      dockerfile: PlayniteAnywhere.Backend/Dockerfile
+    #build:
+    #  context: ..
+    #  dockerfile: PlayniteAnywhere.Backend/Dockerfile
+    image: ghcr.io/funkykwak/playnite-anywhere:latest
     container_name: playnite-anywhere-backend
     ports:
       - "8080:8080"
