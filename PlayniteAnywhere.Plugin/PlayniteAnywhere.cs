@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 
+
 namespace PlayniteAnywhere
 {
     public class PlayniteAnywhere : GenericPlugin
@@ -21,6 +22,7 @@ namespace PlayniteAnywhere
         private WebServer webServer;
         private readonly IPlayniteAPI playniteApi;
         private PreferencesManager preferencesManager;
+        private SyncManager syncManager;
 
         public PlayniteAnywhere(IPlayniteAPI api) : base(api)
         {
@@ -31,6 +33,19 @@ namespace PlayniteAnywhere
             {
                 HasSettings = true
             };
+
+            if (!settings.Settings.UseLocalWebServer)
+            {
+                if (string.IsNullOrWhiteSpace(settings.Settings.SyncServerUrl))
+                {
+                    logger.Error("Missing SyncServerUrl");
+                    return;
+                }
+                syncManager = new SyncManager(
+                    playniteApi,
+                    settings.Settings.SyncServerUrl
+                );
+            }
         }
 
         public override void OnGameInstalled(OnGameInstalledEventArgs args)
@@ -64,11 +79,29 @@ namespace PlayniteAnywhere
             try
             {
                 logger.Info("Playnite Anywhere started.");
-    
-                webServer = new WebServer(playniteApi, preferencesManager);
-                webServer.Start(32650);
 
-                logger.Info("Playnite Anywhere web server started on port 32650.");
+                if (settings.UseLocalWebServer)
+                {
+                    webServer = new WebServer(playniteApi, preferencesManager);
+                    webServer.Start(32650);
+                    logger.Info("Playnite Anywhere web server started on port 32650.");
+                }
+                else
+                {
+                    Task.Run(async () =>
+                    {
+                        try
+                        {
+                            await syncManager.SyncGames();
+                        }
+                        catch (Exception ex)
+                        {
+                            logger.Error(
+                                $"Erreur de synchronisation : {ex}"
+                            );
+                        }
+                    });
+                }
             }
             catch(Exception e)
             {

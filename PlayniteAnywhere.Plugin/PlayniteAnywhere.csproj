@@ -16,7 +16,7 @@
     <None Include="extension.yaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="icon.png">
+    <None Include="..\docs\images\icon.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Localization\*.xaml">
@@ -27,9 +27,14 @@
   </ItemGroup>
   
   <ItemGroup>
-    <Content Include="Web\**\*">
+    <Content Include="..\Web\**\*">
+      <Link>Web\%(RecursiveDir)%(Filename)%(Extension)</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\PlayniteAnywhere.Common\PlayniteAnywhere.Common.csproj" />
   </ItemGroup>
 
 </Project>
