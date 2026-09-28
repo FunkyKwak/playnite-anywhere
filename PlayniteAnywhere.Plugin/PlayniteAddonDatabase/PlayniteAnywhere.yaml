@@ -1,6 +1,6 @@
 AddonId: 'PlayniteAnywhere'
 Type: Generic
-InstallerManifestUrl: https://raw.githubusercontent.com/FunkyKwak/playnite-anywhere/refs/heads/main/plugin/PlayniteAddonDatabase/PlayniteAnywhereInstaller.yaml
+InstallerManifestUrl: https://raw.githubusercontent.com/FunkyKwak/playnite-anywhere/refs/heads/main/PlayniteAnywhere.Plugin/PlayniteAddonDatabase/PlayniteAnywhereInstaller.yaml
 ShortDescription: 'Navigate throw your games from any browser on your local network !'
 Name: 'Playnite Anywhere'
 Author: 'FunkyKwak'
