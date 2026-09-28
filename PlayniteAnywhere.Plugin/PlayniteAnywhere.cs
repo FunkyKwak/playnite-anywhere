@@ -112,7 +112,10 @@ namespace PlayniteAnywhere
         public override void OnApplicationStopped(OnApplicationStoppedEventArgs args)
         {
             // Add code to be executed when Playnite is shutting down.
-            webServer.Stop();
+            if (settings.UseLocalWebServer)
+            {
+                webServer.Stop();
+            }
         }
 
         public override void OnLibraryUpdated(OnLibraryUpdatedEventArgs args)
