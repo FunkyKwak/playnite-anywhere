@@ -4,13 +4,18 @@
 
 Access your Playnite library from any device on your local network.
 
+> [!WARNING]
+> The functionalities are currently very limited, but it suits my own needs.
+> Anyway I would be happy to add new functionalities for anyone need, don't hesitate to submit a feature request in a [new issue](https://github.com/FunkyKwak/playnite-anywhere/issues/new).
+
+
 Playnite Anywhere is a Playnite extension that adds a lightweight web interface to your Playnite library. Once installed, it starts a small web server directly inside Playnite, allowing you to browse your games from a phone, tablet, laptop, or any other device connected to the same local network.
 
 ![screenshot-main](/docs/images/screenshot-main.png)
 
 ## Features
 
-### 📚 Browse your Playnite library
+### ✓ Browse your Playnite library
 
 View your Playnite games directly from your web browser, including:
 
@@ -22,7 +27,7 @@ View your Playnite games directly from your web browser, including:
 
 No external game database or cover service is required.
 
-### 🗂️ Group your games
+### ✓ Group your games
 
 You can group your library by:
 
@@ -35,7 +40,7 @@ Groups can be collapsed and expanded.
 
 Your grouping preference and the collapsed/expanded state of each group are saved automatically.
 
-### 📱 Use it from any device
+### ✓ Use it from any device
 
 Open Playnite Anywhere from any browser on your local network:
 
@@ -43,59 +48,44 @@ Open Playnite Anywhere from any browser on your local network:
 http://YOUR-PC-IP:32650
 ```
 
-For example:
+### ✓ Easy to setup
 
-```text
-http://192.168.1.10:32650
-```
+No additional web server, database, Docker container, or other software is required, just install the plugin and it works.
 
-No additional web server, database, Docker container, or other software is required.
 
 ## Installation
 
-1. Download the latest `.pext` release.
-2. Open Playnite.
-3. Go to **Add-ons → Add-ons menu → Install extension**.
-4. Select the downloaded `.pext` file.
-5. Restart Playnite if required.
+1. Download the [latest `.pext` release](https://github.com/FunkyKwak/playnite-anywhere/releases/latest).
+2. Double-clic on the `.pext` file.
+5. Restart Playnite when requested.
 
-Once Playnite is running, Playnite Anywhere automatically starts its web server.
+Once Playnite is running, Playnite Anywhere automatically starts its web server. Go open it in your web browser, you can find the link in the plugin settings.
 
-## Getting started
 
-Make sure Playnite is running.
+### (Optional) Distant web server - Make it work even when Playnite is off
+1. Create and run a container stack using the [docker-compose](/PlayniteAnywhere.Backend/docker-compose.yml) file provided here
+2. In the plugin settings
+    - choose "Serveur Web distant"
+    - set your the url adress of your server, with port (for example `http://192.168.1.10:8080`)
+3. Restart playnite
 
-Find the local IP address of the computer running Playnite. On Windows, you can find it with:
+Now everytime you start Playnite, the plugin will sync the games infos to your external web server. 
+Go open it in your web browser, you can find the link in the plugin settings : it's the url you just set in the above step 2.
 
-```text
-ipconfig
-```
 
-Look for the **IPv4 Address** of your local network adapter.
+## Requirements
 
-Then open the following address from another device connected to the same network:
+Playnite must be running for Playnite Anywhere to be accessible.
+
+Find the local IP address of the computer running Playnite. You can find the address in the plugin settings.
 
 ```text
 http://YOUR-PC-IP:32650
 ```
 
-For example:
+Directly on the computer running Playnite, you can also open:
+[http://localhost:32650](http://localhost:32650)
 
-```text
-http://192.168.1.10:32650
-```
-
-You can also open:
-
-```text
-http://localhost:32650
-```
-
-directly on the computer running Playnite.
-
-## Requirements
-
-Playnite must be running for Playnite Anywhere to be accessible.
 
 ## Security & network access
 
@@ -104,17 +94,16 @@ Playnite Anywhere 0.1 is designed for local network use.
 The web server listens on the computer's network interfaces, so other devices on the same LAN can access it.
 
 This initial release does not provide:
-
-Authentication
-HTTPS
-Internet/external access protection
-User accounts
+- Authentication
+- HTTPS
+- Internet/external access protection
+- User accounts
 
 For this reason, **do not expose port 32650 directly to the Internet**.
 
 ## Current limitations
 
-Version 0.1 is intentionally focused on browsing your library.
+the current version is intentionally focused on browsing your library.
 
 The following features are not currently available:
 - Launching games remotely
@@ -129,24 +118,20 @@ The following features are not currently available:
 - HTTPS
 - Internet access
 
-These may be considered for future releases. **Do not hesitate to submit feature request via GitHub issue, by now I'm the only user so I won't do much if not requested.**
+These may be considered for future releases. **Do not hesitate to submit feature request via [a new GitHub issue](https://github.com/FunkyKwak/playnite-anywhere/issues/new), by now I'm the only user so I won't do much if not requested.**
 
 ## Troubleshooting
 ### The page does not load
 
 Make sure:
 
-Playnite is running.
-Playnite Anywhere is installed and enabled.
-You are using the correct IP address of the computer running Playnite.
-Port 32650 is not blocked by Windows Firewall.
-Both devices are connected to the same local network.
+- Playnite is running.
+- Playnite Anywhere is installed and enabled.
+- You are using the correct IP address of the computer running Playnite.
+- Port 32650 is not blocked by Windows Firewall.
+- Both devices are connected to the same local network.
 
-Try accessing:
-
-http://localhost:32650
-
-on the Playnite computer first.
+Try accessing [http://localhost:32650](http://localhost:32650) on the Playnite computer first.
 
 If this works but another device cannot connect, the issue is likely related to the local network or Windows Firewall.
 
