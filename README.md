@@ -62,6 +62,8 @@ No additional web server, database, Docker container, or other software is requi
 Once Playnite is running, Playnite Anywhere automatically starts its web server. Go open it in your web browser, you can find the link in the plugin settings.
 
 
+![Téléchargements GitHub](https://img.shields.io/github/downloads/FunkyKwak/playnite-anywhere/total)
+
 ### (Optional) Distant web server - Make it work even when Playnite is off
 1. Create and run a container stack using the [docker-compose](/PlayniteAnywhere.Backend/docker-compose.yml) file provided here
 2. In the plugin settings
